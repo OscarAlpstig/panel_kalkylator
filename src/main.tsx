@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import { calculate, GeometryError, parseMeasure, type Layout } from './geometry';
 import './style.css';
+import {WidthInfo} from './width-info';
 import {InstallGuide} from './install-guide';
 import {alignmentReferences,type AlignmentReference} from './alignment';
 import {AlignmentReadout} from './alignment-view';
@@ -70,7 +71,7 @@ function App() {
     }
     function setHeight(wallHeight:string){setWorkspace(w=>({...w,alternatives:w.alternatives.map(a=>({...a,form:{...a.form,wallHeight}}))}));}
     const set = <K extends keyof Form>(key: K, value: Form[K]) => { setForm(f => ({ ...f, [key]: value })); setPage(0); setSelected(null); };
-    const field = (key: keyof Form, label: string, hint?: string) => <label className="field" key={key}><span>{label}</span><div className={'input-wrap ' + (outcome.error?.field === key ? 'invalid' : '')}><input inputMode="decimal" value={String(form[key])} onChange={e => set(key, e.target.value as never)} aria-invalid={outcome.error?.field === key} aria-describedby={outcome.error?.field === key ? 'calculation-error' : undefined}/><span>{key === 'count' ? 'st' : 'mm'}</span></div>{hint && <small>{hint}</small>}{outcome.error?.field === key && <small className="field-error">{outcome.error.message}</small>}</label>;
+    const field = (key: keyof Form, label: string, hint?: string) => <div className="field" key={key}><div className="field-label-row"><label htmlFor={`field-${key}`}>{label}</label>{(key==='bottom'||key==='lid')&&<WidthInfo kind={key}/>}</div><div className={'input-wrap ' + (outcome.error?.field === key ? 'invalid' : '')}><input id={`field-${key}`} inputMode="decimal" value={String(form[key])} onChange={e => set(key, e.target.value as never)} aria-invalid={outcome.error?.field === key} aria-describedby={[hint?`help-${key}`:'',outcome.error?.field === key?`error-${key}`:''].filter(Boolean).join(' ')||undefined}/><span>{key === 'count' ? 'st' : 'mm'}</span></div>{hint && <small id={`help-${key}`}>{hint}</small>}{outcome.error?.field === key && <small id={`error-${key}`} className="field-error">{outcome.error.message}</small>}</div>;
     const r = outcome.layout;
     const references=r&&outcome.range?alignmentReferences(r,outcome.range.start.x,form.openings):[];
     const rows = r ? [...r.boards].sort((a, b) => a.start - b.start || a.kind.localeCompare(b.kind)) : [];
