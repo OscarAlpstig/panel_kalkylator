@@ -1,0 +1,11 @@
+node_modules/
+dist/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local planning notes contain private project references.
+STARTPROMPT.md
+.DS_Store
+.env
+.env.*

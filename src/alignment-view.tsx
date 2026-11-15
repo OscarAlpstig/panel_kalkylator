@@ -1,0 +1,6 @@
+import type {AlignmentReference} from './alignment';
+const f=(v:number)=>new Intl.NumberFormat('sv-SE',{minimumFractionDigits:1,maximumFractionDigits:1}).format(v);
+export function AlignmentReadout({references,onSelect}:{references:AlignmentReference[];onSelect:(id:string)=>void}){
+ if(!references.length)return null;
+ return <section className="alignment-readout" aria-label="Lockens läge mot hål och plåt"><h3>Lockens läge mot hål & plåt</h3><p>Blå referenslinje = plåtkant. Orange = dörr- eller fönsterkant. Måtten räknas från vald startpunkt.</p><div className="alignment-items">{references.map(r=><div className={`alignment-item ${r.kind}`} key={r.id}><div><strong>{r.label}</strong><span>Kant vid {f(r.x)} mm</span></div>{r.board===null?<span>Inget lock i denna sträcka.</span>:<div><button onClick={()=>onSelect(`lid-${r.board}`)}>Lock {r.board} · {r.edge==='end'?'högerkant':'vänsterkant'} {f(r.actual!)} mm ↗</button><span className={Math.abs(r.delta!)<1e-5?'aligned':'misaligned'}>{Math.abs(r.delta!)<1e-5?'Linjerar med kanten':`${f(Math.abs(r.delta!))} mm ${r.delta!<0?'till vänster':'till höger'} om kanten`}</span></div>}</div>)}</div><p>Välj botten eller lock som avslut för att ändra placeringen vid hålet. Linjeringen mot plåten visas som jämförelse och är inte tvingande i sträckläget.</p></section>;
+}
